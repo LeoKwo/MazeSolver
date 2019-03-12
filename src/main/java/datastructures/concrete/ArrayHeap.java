@@ -1,7 +1,7 @@
 package datastructures.concrete;
 
 import datastructures.interfaces.IPriorityQueue;
-import misc.exceptions.NotYetImplementedException;
+import misc.exceptions.EmptyContainerException;
 
 /**
  * @see IPriorityQueue for details on what each method must do.
@@ -17,8 +17,20 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
 
     // Feel free to add more fields and constants.
 
+    // Added more fields
+    private int size;
+    // private Heap<T> min;
+    // private Heap<T> lastAdded;
+    // Added more fields
+
     public ArrayHeap() {
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+
+        // Modified
+        this.heap = makeArrayOfT(17);        // Maybe questionable
+        this.size = 0;
+        // this.min = null;                             // This too
+        // Modified
     }
 
     /**
@@ -39,21 +51,107 @@ public class ArrayHeap<T extends Comparable<T>> implements IPriorityQueue<T> {
 
     @Override
     public T removeMin() {
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+
+        // unchecked tho
+        if (this.size != 0) {
+            T data = this.heap[0];
+            this.heap[0] = this.heap[this.size - 1];
+            this.size--;
+            percolateDown(0);
+            //this.size--;
+            return data;
+
+        } else {
+            throw new EmptyContainerException();
+        }
+        // unchecked tho
     }
 
     @Override
     public T peekMin() {
-        throw new NotYetImplementedException();
+        if (this.size == 0) {
+            throw new EmptyContainerException();
+        } else {
+            return this.heap[0];
+        }
+        //return this.heap[0];
     }
 
     @Override
     public void insert(T item) {
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+        if (item == null) {
+            throw new IllegalArgumentException();
+        } else {
+            if (size / this.heap.length >= 0.5) {
+                T[] newHeap = makeArrayOfT(2 * this.heap.length);
+                for (int i = 0; i < this.heap.length; i++) {
+                    newHeap[i] = this.heap[i];
+                }
+                this.heap = newHeap;
+            }
+            this.heap[this.size] = item;
+            percolateUp(this.size);
+            this.size++;
+            // percolateUp
+        }
     }
 
     @Override
     public int size() {
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+        return this.size;
     }
+
+    private void percolateDown(int index) {
+        int smallest = findSmallest(index);
+        if (smallest != -1) {
+            if (this.heap[smallest].compareTo(this.heap[index]) <= 0) {
+                T temp = this.heap[smallest];
+                this.heap[smallest] = this.heap[index];
+                this.heap[index] = temp;
+                percolateDown(smallest);
+            }
+        }
+    }
+
+    private int findSmallest(int index) {
+        if (4 * index + 1 <= this.size - 1) {
+            T min = this.heap[4 * index + 1];
+            int minIndex = 4 * index + 1;
+            for (int i = 2; i <= 4; i++) {
+                if (4 * index + i <= this.size - 1) {
+                    if (min.compareTo(this.heap[4 * index + i]) >= 0) {
+                        min = this.heap[4 * index + i];
+                        minIndex = 4 * index + i;
+                    }
+                }
+            }
+            return minIndex;
+        } else {
+            return -1;
+            // Means no child
+        }
+    }
+
+    private void percolateUp(int index) {
+        if (this.heap[(index - 1) / 4].compareTo(this.heap[index]) >= 0) {
+            T temp = this.heap[(index - 1) / 4];
+            this.heap[(index - 1) / 4] = this.heap[index];
+            this.heap[index] = temp;
+            if (index != 0) {
+                percolateUp((index - 1) / 4);
+            }
+        }
+    }
+
+    public String toString() {
+        String data = "";
+        for (int i = 0; i < size; i++) {
+            data += " " + this.heap[i].toString();
+        }
+        return data;
+    }
+    // resize
 }
