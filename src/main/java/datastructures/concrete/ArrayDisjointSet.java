@@ -187,6 +187,8 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
                 }
                 this.size--;
             }
+        } else {
+            throw new IllegalArgumentException();
         }
     }
     // new
