@@ -93,8 +93,13 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
             //pointers[index2] = pointers[index2] - 1; //
             this.size--;
         } else {
-            pointers[index1] = index2; // tiebreaker
-            pointers[index2] = pointers[index2] - 1;
+            if (index1 > index2) {
+                pointers[index2] = index1; // tiebreaker
+                pointers[index1] = pointers[index1] - 1;
+            } else if (index2 > index1) {
+                pointers[index1] = index2; // tiebreaker
+                pointers[index2] = pointers[index2] - 1;
+            }
             this.size--;
         }
         //throw new NotYetImplementedException();
