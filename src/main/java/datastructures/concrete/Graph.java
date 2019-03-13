@@ -58,7 +58,8 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     private IDictionary<V, ISet<V>> graph;
     private int numVertices;
     private int numEdges;
-    private IDictionary<E, Double> edgeWeights;
+    // private IDictionary<E, Double> edgeWeights;
+    private ISet<E> edgeWeights;
     //
 
     /**
@@ -71,7 +72,8 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      */
     public Graph(IList<V> vertices, IList<E> edges) {
         this.graph = new ChainedHashDictionary<>();
-        this.edgeWeights = new ChainedHashDictionary<>();
+        //this.edgeWeights = new ChainedHashDictionary<>();
+        edgeWeights = new ChainedHashSet<>();
         if (vertices != null && !vertices.contains(null) && edges != null && !edges.contains(null)) {
             for (E edge : edges) {
                 if (vertices.contains(edge.getVertex1()) && vertices.contains(edge.getVertex2())) {
@@ -86,7 +88,8 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
                     graph.get(edge.getVertex1()).add(edge.getVertex2());
                     graph.get(edge.getVertex2()).add(edge.getVertex1());
                     if (edge.getWeight() >= 0) {
-                        edgeWeights.put(edge, edge.getWeight());
+                        //edgeWeights.put(edge, edge.getWeight());
+                        edgeWeights.add(edge);
                     } else {
                         throw new IllegalArgumentException();
                     }
@@ -154,7 +157,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      * Precondition: the graph does not contain any unconnected components.
      */
     public ISet<E> findMinimumSpanningTree() {
-        //throw new NotYetImplementedException();
+        throw new NotYetImplementedException();
     }
 
     /**
