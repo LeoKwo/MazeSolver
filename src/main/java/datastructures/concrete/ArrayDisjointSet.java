@@ -1,5 +1,6 @@
 package datastructures.concrete;
 
+import datastructures.concrete.dictionaries.ChainedHashDictionary;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IDisjointSet;
 //import misc.exceptions.NotYetImplementedException;
@@ -22,6 +23,7 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     public ArrayDisjointSet() {
         this.pointers = new int[100];
         this.size = 0;
+        this.dic = new ChainedHashDictionary<>();
     }
 
     /**
@@ -30,17 +32,41 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
      *
      * @throws IllegalArgumentException  if the item is already a part of this disjoint set somewhere
      */
+    // old
+    // @Override
+    // public void makeSet(T item) {
+    //     // throw new NotYetImplementedException();
+    //
+    //     try {
+    //         //findSetRecursively(item.hashCode());
+    //         findSetRecursively(getHash(item, pointers.length));
+    //         throw new IllegalArgumentException();
+    //     } catch (IllegalArgumentException e) {
+    //         //pointers[item.hashCode()] = -1;
+    //
+    //         // old
+    //         pointers[getHash(item, pointers.length)] = -1;
+    //         this.size++;
+    //         // old
+    //
+    //         // new
+    //         // this.pointers[size] = -1;
+    //         // this.dic.put(item, size);
+    //         // this.size++;
+    //         // new
+    //     }
+    // }
+    // old
     @Override
     public void makeSet(T item) {
         // throw new NotYetImplementedException();
 
-        try {
-            //findSetRecursively(item.hashCode());
-            findSetRecursively(getHash(item, pointers.length));
+        int indexOfItem = dic.getOrDefault(item, -1);
+        if (indexOfItem != -1) {
             throw new IllegalArgumentException();
-        } catch (IllegalArgumentException e) {
-            //pointers[item.hashCode()] = -1;
-            pointers[getHash(item, pointers.length)] = -1;
+        } else {
+            this.pointers[size] = -1;
+            this.dic.put(item, size);
             this.size++;
         }
     }
@@ -50,27 +76,53 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
      *
      * @throws IllegalArgumentException  if the item is not contained inside this disjoint set
      */
+    // old
+    // @Override
+    // public int findSet(T item) {
+    //     // throw new NotYetImplementedException();
+    //     // return findSetRecursively(item.hashCode());
+    //     return findSetRecursively(getHash(item, pointers.length));
+    // }
+    // old
+
+    // new
     @Override
     public int findSet(T item) {
-        // throw new NotYetImplementedException();
-        // return findSetRecursively(item.hashCode());
-        return findSetRecursively(getHash(item, pointers.length));
-    }
-
-    // return index of representative
-    private int findSetRecursively(int index) {
-        if (pointers[index] < 0) {
-            //return pointers[index];
-            return index;
-        } else if (pointers[index] != 0) {
-            return findSetRecursively(pointers[index]);
+        int indexOfItem = dic.getOrDefault(item, -1);
+        if (indexOfItem != -1) {
+            return findSetRecursively(indexOfItem);
         } else {
             throw new IllegalArgumentException();
         }
-        // } else  {
-        //     return findSetRecursively(pointers[index]);
-        // }
     }
+    // new
+
+    // return index of representative
+    // old
+    // private int findSetRecursively(int index) {
+    //     if (pointers[index] < 0) {
+    //         //return pointers[index];
+    //         return index;
+    //     } else if (pointers[index] != 0) {
+    //         return findSetRecursively(pointers[index]);
+    //     } else {
+    //         throw new IllegalArgumentException();
+    //     }
+    //     // } else  {
+    //     //     return findSetRecursively(pointers[index]);
+    //     // }
+    // }
+    // old
+
+    // new
+    private int findSetRecursively(int index) {
+        if (pointers[index] < 0) {
+            return index;
+        } else {
+            return findSetRecursively(pointers[index]);
+        }
+    }
+    // new
 
     /**
      * Finds the two sets associated with the given items, and combines the two sets together.
@@ -78,36 +130,66 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
      *
      * @throws IllegalArgumentException  if either item1 or item2 is not contained inside this disjoint set
      */
+    // old
+    // @Override
+    // public void union(T item1, T item2) {
+    //     // int rep1 = findSet(item1);
+    //     int index1 = findSetRecursively(getHash(item1, pointers.length));
+    //     // int rep2 = findSet(item2);
+    //     int index2 = findSetRecursively(getHash(item2, pointers.length));
+    //     int rank1 = pointers[index1];
+    //     int rank2 = pointers[index2];
+    //
+    //     if (Math.abs(rank1) > Math.abs(rank2)) {
+    //         pointers[index2] = index1;
+    //         //pointers[index1] = pointers[index1] - 1; //
+    //         this.size--;
+    //     } else if (Math.abs(rank2) > Math.abs(rank1)) { // Math.abs(rep1) <= Math.abs(rep2)
+    //         pointers[index1] = index2;
+    //         //pointers[index2] = pointers[index2] - 1; //
+    //         this.size--;
+    //     } else {
+    //         if (index1 > index2) {
+    //             pointers[index2] = index1; // tiebreaker
+    //             pointers[index1] = pointers[index1] - 1;
+    //         } else if (index2 > index1) {
+    //             pointers[index1] = index2; // tiebreaker
+    //             pointers[index2] = pointers[index2] - 1;
+    //         }
+    //         this.size--;
+    //     }
+    //     //throw new NotYetImplementedException();
+    //     // TODO: tieBreaker: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
+    // }
+    // old
+
+    // new
     @Override
     public void union(T item1, T item2) {
-        // int rep1 = findSet(item1);
-        int index1 = findSetRecursively(getHash(item1, pointers.length));
-        // int rep2 = findSet(item2);
-        int index2 = findSetRecursively(getHash(item2, pointers.length));
-        int rank1 = pointers[index1];
-        int rank2 = pointers[index2];
-
-        if (Math.abs(rank1) > Math.abs(rank2)) {
-            pointers[index2] = index1;
-            //pointers[index1] = pointers[index1] - 1; //
-            this.size--;
-        } else if (Math.abs(rank2) > Math.abs(rank1)) { // Math.abs(rep1) <= Math.abs(rep2)
-            pointers[index1] = index2;
-            //pointers[index2] = pointers[index2] - 1; //
-            this.size--;
-        } else {
-            if (index1 > index2) {
-                pointers[index2] = index1; // tiebreaker
-                pointers[index1] = pointers[index1] - 1;
-            } else if (index2 > index1) {
-                pointers[index1] = index2; // tiebreaker
-                pointers[index2] = pointers[index2] - 1;
+        int index1 = dic.getOrDefault(item1, -1);
+        int index2 = dic.getOrDefault(item2, -1);
+        if (index1 != -1 && index2 != -1) {
+            int rank1 = pointers[index1];
+            int rank2 = pointers[index2];
+            if (Math.abs(rank1) > Math.abs(rank2)) {
+                pointers[index2] = index1;
+                this.size--;
+            } else if (Math.abs(rank2) > Math.abs(rank1)) { // Math.abs(rep1) <= Math.abs(rep2)
+                pointers[index1] = index2;
+                this.size--;
+            } else {
+                if (index1 > index2) {
+                    pointers[index2] = index1; // tiebreaker
+                    pointers[index1] = pointers[index1] - 1;
+                } else if (index2 > index1) {
+                    pointers[index1] = index2; // tiebreaker
+                    pointers[index2] = pointers[index2] - 1;
+                }
+                this.size--;
             }
-            this.size--;
         }
-        //throw new NotYetImplementedException();
-        // TODO: tieBreaker: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
     }
+    // new
 
     // private boolean tieBreaker(T item1, T item2) {
     //     // TODO: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
