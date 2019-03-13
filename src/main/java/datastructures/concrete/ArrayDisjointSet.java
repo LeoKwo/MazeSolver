@@ -124,6 +124,8 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         if (pointers[index] < 0) {
             return index;
         } else {
+            //update the pointer
+            pointers[index] = findSetRecursively(pointers[index]);
             return findSetRecursively(pointers[index]);
         }
     }
@@ -172,9 +174,10 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     @Override
     public void union(T item1, T item2) {
         int index1 = dic.getOrDefault(item1, -1);
+        // index1 = findSetRecursively(index1);
         int index2 = dic.getOrDefault(item2, -1);
+        // index2 = findSetRecursively(index2);
         if (index1 != -1 && index2 != -1) {
-
             index1 = findSetRecursively(index1);
             index2 = findSetRecursively(index2);
             int rank1 = pointers[index1];

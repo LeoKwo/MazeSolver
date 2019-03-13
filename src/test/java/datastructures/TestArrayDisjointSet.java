@@ -113,4 +113,60 @@ public class TestArrayDisjointSet extends BaseTest {
             }
         }
     }
+
+    // don't know how to test this shit
+    @Test(timeout=SECOND)
+    public void testUnnecessaryUnionThrowsException() {
+        String[] items = new String[] {"a", "b", "c", "d", "e"};
+        IDisjointSet<String> forest = this.createForest(items);
+
+        forest.union("a", "b");
+        int id = forest.findSet("a");
+        for (int i = 0; i < 5; i++) {
+            check(forest, items, new int[] {id, id, 2, 3, 4});
+        }
+
+        forest.union("a", "b");
+        for (int i = 0; i < 5; i++) {
+            check(forest, items, new int[] {id, id, 2, 3, 4});
+        }
+    }
+
+
+    // if the item is already a part of disjoint set somewhere
+    @Test(timeout=SECOND)
+    public void testMakeDuplicate() {
+        String[] items = new String[] {"a", "b", "c", "b"};
+        try {
+            IDisjointSet<String> forest = this.createForest(items);
+            for (int i = 0; i < 4; i++) {
+                check(forest, items, new int[] {0, 1, 2, 3});
+            }
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) {
+            // All ok -- expected result
+        }
+    }
+
+
+    @Test(timeout=SECOND)
+    public void testUnionAll() {
+        String[] items = new String[] {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
+        IDisjointSet<String> forest = this.createForest(items);
+
+        forest.union("a", "b");
+        int id = forest.findSet("a");
+        forest.union("a", "c");
+        forest.union("a", "d");
+        forest.union("a", "e");
+        forest.union("a", "f");
+        forest.union("a", "g");
+        forest.union("a", "h");
+        forest.union("a", "i");
+        forest.union("a", "j");
+
+        for (int i = 0; i < 10; i++) {
+            check(forest, items, new int[] {id, id, id, id, id, id, id, id, id, id});
+        }
+    }
 }
