@@ -82,13 +82,14 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         int index1 = findSetRecursively(getHash(item1, pointers.length));
         // int rep2 = findSet(item2);
         int index2 = findSetRecursively(getHash(item2, pointers.length));
-        int rep1 = pointers[index1];
-        int rep2 = pointers[index2];
-        if (Math.abs(rep1) > Math.abs(rep2)) {
+        int rank1 = pointers[index1];
+        int rank2 = pointers[index2];
+
+        if (Math.abs(rank1) > Math.abs(rank2)) {
             pointers[index2] = index1;
             //pointers[index1] = pointers[index1] - 1; //
             this.size--;
-        } else if (Math.abs(rep2) > Math.abs(rep1)) { // Math.abs(rep1) <= Math.abs(rep2)
+        } else if (Math.abs(rank2) > Math.abs(rank1)) { // Math.abs(rep1) <= Math.abs(rep2)
             pointers[index1] = index2;
             //pointers[index2] = pointers[index2] - 1; //
             this.size--;
