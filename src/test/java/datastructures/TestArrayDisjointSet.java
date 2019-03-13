@@ -116,7 +116,7 @@ public class TestArrayDisjointSet extends BaseTest {
 
     // don't know how to test this shit
     @Test(timeout=SECOND)
-    public void testUnnecessaryUnionThrowsException() {
+    public void testUnnecessaryUnionRemainsUnchanged() {
         String[] items = new String[] {"a", "b", "c", "d", "e"};
         IDisjointSet<String> forest = this.createForest(items);
 
@@ -127,9 +127,8 @@ public class TestArrayDisjointSet extends BaseTest {
         }
 
         forest.union("a", "b");
-        for (int i = 0; i < 5; i++) {
-            check(forest, items, new int[] {id, id, 2, 3, 4});
-        }
+        assertEquals(id, forest.findSet("a"));
+        assertEquals(id, forest.findSet("b"));
     }
 
 
