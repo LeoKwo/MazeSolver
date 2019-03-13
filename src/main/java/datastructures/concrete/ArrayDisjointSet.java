@@ -125,8 +125,11 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
             return index;
         } else {
             //update the pointer
-            pointers[index] = findSetRecursively(pointers[index]);
-            return findSetRecursively(pointers[index]);
+
+            // Path Compress
+            int newIndex = findSetRecursively(pointers[index]);
+            pointers[index] = newIndex;
+            return newIndex;
         }
     }
     // new

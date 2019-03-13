@@ -168,4 +168,17 @@ public class TestArrayDisjointSet extends BaseTest {
             check(forest, items, new int[] {id, id, id, id, id, id, id, id, id, id});
         }
     }
+
+    @Test(timeout=SECOND)
+    public void testResize() {
+        IDisjointSet<Integer> forest = new ArrayDisjointSet<>();
+        forest.makeSet(0);
+
+        int numItems = 50000;
+        for (int i = 1; i < numItems; i++) {
+            forest.makeSet(i);
+        }
+
+        assertEquals(50000, ((ArrayDisjointSet<Integer>) forest).size());
+    }
 }
