@@ -1,5 +1,6 @@
 package datastructures.concrete;
 
+import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IDisjointSet;
 //import misc.exceptions.NotYetImplementedException;
 
@@ -16,6 +17,7 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     // successfully implement this class.
 
     private int size;
+    private IDictionary<T, Integer> dic;
 
     public ArrayDisjointSet() {
         this.pointers = new int[100];
