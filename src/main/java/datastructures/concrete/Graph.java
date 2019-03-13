@@ -1,5 +1,7 @@
 package datastructures.concrete;
 
+import datastructures.concrete.dictionaries.ChainedHashDictionary;
+import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IEdge;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
@@ -52,6 +54,12 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     // Working with generics is really not the focus of this class, so if you
     // get stuck, let us know we'll try and help you get unstuck as best as we can.
 
+    //
+    private IDictionary<V, ISet<V>> graph;
+    private int numVertices;
+    private int numEdges;
+    //
+
     /**
      * Constructs a new graph based on the given vertices and edges.
      *
@@ -61,7 +69,28 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      * @throws IllegalArgumentException if vertices or edges are null or contain null
      */
     public Graph(IList<V> vertices, IList<E> edges) {
-        // TODO: Your code here
+        if (vertices != null && !vertices.contains(null) && edges != null && !edges.contains(null)) {
+            for (E edge : edges) {
+                if (vertices.contains(edge.getVertex1()) && vertices.contains(edge.getVertex2())) {
+                    ISet<V> destinations1 = graph.getOrDefault(edge.getVertex1(), null);
+                    ISet<V> destinations2 = graph.getOrDefault(edge.getVertex2(), null);
+                    if (destinations1 == null) {
+                        graph.put(edge.getVertex1(), new ChainedHashSet<>());
+                    }
+                    if (destinations2 == null) {
+                        graph.put(edge.getVertex2(), new ChainedHashSet<>());
+                    }
+                    graph.get(edge.getVertex1()).add(edge.getVertex2());
+                    graph.get(edge.getVertex2()).add(edge.getVertex1());
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+            numEdges = edges.size();
+            numVertices = vertices.size();
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -96,14 +125,16 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      * Returns the number of vertices contained within this graph.
      */
     public int numVertices() {
-        throw new NotYetImplementedException();
+        return numVertices;
+        // throw new NotYetImplementedException();
     }
 
     /**
      * Returns the number of edges contained within this graph.
      */
     public int numEdges() {
-        throw new NotYetImplementedException();
+        return numEdges;
+        // throw new NotYetImplementedException();
     }
 
     /**
