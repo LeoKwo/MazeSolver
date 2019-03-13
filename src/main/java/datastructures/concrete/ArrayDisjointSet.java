@@ -65,9 +65,13 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         if (indexOfItem != -1) {
             throw new IllegalArgumentException();
         } else {
+            //resize
+            if (this.size == pointers.length) {
+                resize();
+            }
+            //resize
             this.pointers[size] = -1;
             this.dic.put(item, size);
-            // TODO: Resize
             this.size++;
         }
     }
@@ -204,7 +208,7 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     //     // TODO: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
     // }
 
-    // TODO: Resizing
+
 
     public int size() {
         return size;
@@ -223,4 +227,13 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     //         return 0;
     //     }
     // }
+
+    // resize method
+    private void resize() {
+        int[] newPointers = new int[pointers.length * 2];
+        for (int i = 0; i < pointers.length; i++) {
+            newPointers[i] = pointers[i];
+        }
+        this.pointers = newPointers;
+    }
 }
