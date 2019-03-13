@@ -5,6 +5,7 @@ import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IEdge;
 import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
+import misc.Sorter;
 import misc.exceptions.NoPathExistsException;
 import misc.exceptions.NotYetImplementedException;
 
@@ -59,7 +60,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     private int numVertices;
     private int numEdges;
     // private IDictionary<E, Double> edgeWeights;
-    private ISet<E> edgeWeights;
+    private IList<E> edgeWeights;
     //
 
     /**
@@ -73,7 +74,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     public Graph(IList<V> vertices, IList<E> edges) {
         this.graph = new ChainedHashDictionary<>();
         //this.edgeWeights = new ChainedHashDictionary<>();
-        edgeWeights = new ChainedHashSet<>();
+        edgeWeights = new DoubleLinkedList<>();
         if (vertices != null && !vertices.contains(null) && edges != null && !edges.contains(null)) {
             for (E edge : edges) {
                 if (vertices.contains(edge.getVertex1()) && vertices.contains(edge.getVertex2())) {
@@ -157,7 +158,8 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      * Precondition: the graph does not contain any unconnected components.
      */
     public ISet<E> findMinimumSpanningTree() {
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+        edgeWeights = Sorter.topKSort(edgeWeights.size(), edgeWeights);
     }
 
     /**
