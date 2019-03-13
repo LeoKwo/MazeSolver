@@ -57,11 +57,14 @@ public class TestArrayDisjointSet extends BaseTest {
 
         forest.union("a", "b");
         int id = forest.findSet("a");
+        // check(forest, items, new int[] {1, 1, 2, 3, 4});
 
         forest.union("a", "c");
+        // check(forest, items, new int[] {2, 1, 2, 3, 4});
 
         for (int i = 0; i < 5; i++) {
             check(forest, items, new int[] {id, id, id, 3, 4});
+            // check(forest, items, new int[] {2, 1, 2, 3, 4});
         }
     }
 

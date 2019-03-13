@@ -67,6 +67,7 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         } else {
             this.pointers[size] = -1;
             this.dic.put(item, size);
+            // TODO: Resize
             this.size++;
         }
     }
@@ -169,8 +170,14 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         int index1 = dic.getOrDefault(item1, -1);
         int index2 = dic.getOrDefault(item2, -1);
         if (index1 != -1 && index2 != -1) {
+
+            index1 = findSetRecursively(index1);
+            index2 = findSetRecursively(index2);
             int rank1 = pointers[index1];
             int rank2 = pointers[index2];
+            // int rank1 = findSetRecursively(index1);
+            // int rank2 = findSetRecursively(index2);
+
             if (Math.abs(rank1) > Math.abs(rank2)) {
                 pointers[index2] = index1;
                 this.size--;
@@ -203,17 +210,17 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         return size;
     }
 
-    private int getHash(T item, int length) {
-        if (item != null) {
-            int hash = item.hashCode();
-            if (hash < 0) {
-                hash = -hash;
-                return hash % length;
-            } else {
-                return hash % length;
-            }
-        } else {
-            return 0;
-        }
-    }
+    // private int getHash(T item, int length) {
+    //     if (item != null) {
+    //         int hash = item.hashCode();
+    //         if (hash < 0) {
+    //             hash = -hash;
+    //             return hash % length;
+    //         } else {
+    //             return hash % length;
+    //         }
+    //     } else {
+    //         return 0;
+    //     }
+    // }
 }
