@@ -14,10 +14,10 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     // However, feel free to add more methods and private helper methods.
     // You will probably need to add one or two more fields in order to
     // successfully implement this class.
+
     private int size;
 
     public ArrayDisjointSet() {
-        // TODO: your code here
         this.pointers = new int[100];
         this.size = 0;
     }
@@ -33,10 +33,12 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         // throw new NotYetImplementedException();
 
         try {
-            findSetRecursively(item.hashCode());
+            //findSetRecursively(item.hashCode());
+            findSetRecursively(getHash(item, pointers.length));
             throw new IllegalArgumentException();
         } catch (IllegalArgumentException e) {
-            pointers[item.hashCode()] = -1;
+            //pointers[item.hashCode()] = -1;
+            pointers[getHash(item, pointers.length)] = -1;
             this.size++;
         }
     }
@@ -49,18 +51,23 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     @Override
     public int findSet(T item) {
         // throw new NotYetImplementedException();
-
-        return findSetRecursively(item.hashCode());
+        // return findSetRecursively(item.hashCode());
+        return findSetRecursively(getHash(item, pointers.length));
     }
 
+    // return index of representative
     private int findSetRecursively(int index) {
         if (pointers[index] < 0) {
-            return pointers[index];
+            //return pointers[index];
+            return index;
         } else if (pointers[index] != 0) {
             return findSetRecursively(pointers[index]);
         } else {
             throw new IllegalArgumentException();
         }
+        // } else  {
+        //     return findSetRecursively(pointers[index]);
+        // }
     }
 
     /**
@@ -71,18 +78,45 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
      */
     @Override
     public void union(T item1, T item2) {
-        int rep1 = findSet(item1);
-        int rep2 = findSet(item2);
-        if (Math.abs(rep1) > rep2) {
-            pointers[rep2] = rep1;
-        } else { // Math.abs(rep1) <= rep2
-            pointers[rep1] = rep2;
+        // int rep1 = findSet(item1);
+        int index1 = findSetRecursively(getHash(item1, pointers.length));
+        // int rep2 = findSet(item2);
+        int index2 = findSetRecursively(getHash(item2, pointers.length));
+        int rep1 = pointers[index1];
+        int rep2 = pointers[index2];
+        if (Math.abs(rep1) > Math.abs(rep2)) {
+            pointers[index2] = index1 - 1;
+
+            this.size--;
+        } else { // Math.abs(rep1) <= Math.abs(rep2)
+            pointers[index1] = index2 - 1;
+            this.size--;
         }
         //throw new NotYetImplementedException();
-        // TODO: iteBreaker: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
+        // TODO: tieBreaker: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
     }
 
     // private boolean tieBreaker(T item1, T item2) {
     //     // TODO: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
     // }
+
+    // TODO: Resizing
+
+    public int size() {
+        return size;
+    }
+
+    private int getHash(T item, int length) {
+        if (item != null) {
+            int hash = item.hashCode();
+            if (hash < 0) {
+                hash = -hash;
+                return hash % length;
+            } else {
+                return hash % length;
+            }
+        } else {
+            return 0;
+        }
+    }
 }
