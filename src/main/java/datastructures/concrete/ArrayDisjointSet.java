@@ -85,11 +85,12 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
         int rep1 = pointers[index1];
         int rep2 = pointers[index2];
         if (Math.abs(rep1) > Math.abs(rep2)) {
-            pointers[index2] = index1 - 1;
-
+            pointers[index2] = index1;
+            pointers[index1] = pointers[index1] - 1;
             this.size--;
         } else { // Math.abs(rep1) <= Math.abs(rep2)
-            pointers[index1] = index2 - 1;
+            pointers[index1] = index2;
+            pointers[index2] = pointers[index2] - 1;
             this.size--;
         }
         //throw new NotYetImplementedException();
