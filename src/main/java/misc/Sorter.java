@@ -1,7 +1,9 @@
 package misc;
 
+import datastructures.concrete.ArrayHeap;
+import datastructures.concrete.DoubleLinkedList;
 import datastructures.interfaces.IList;
-import misc.exceptions.NotYetImplementedException;
+import datastructures.interfaces.IPriorityQueue;
 
 public class Sorter {
     /**
@@ -32,6 +34,58 @@ public class Sorter {
         // - You should implement this method by using your ArrayHeap for the sake of
         //   efficiency.
 
-        throw new NotYetImplementedException();
+        // throw new NotYetImplementedException();
+        if (k < 0 || input == null) {
+            throw new IllegalArgumentException();
+        } else {
+            // if (k <= input.size()) {
+            IPriorityQueue<T> heap = new ArrayHeap<>();
+            if (k > input.size()) {
+                k = input.size();
+            }
+            //if (k < input.size()) {
+
+            // for (int i = 0; i < k; i++) {
+            //     heap.insert(input.get(i));
+            // }
+            // //} else {
+            // //    for (int i = 0; i < input.size(); i++) {
+            // //        heap.insert(input.get(i));
+            // //    }
+            // //}
+            // if (heap.size() != 0) {
+            //     for (int i = k; i < input.size(); i++) {
+            //         T item = input.get(i);
+            //         if (heap.peekMin().compareTo(item) <= 0) {
+            //             heap.removeMin();
+            //             heap.insert(item);
+            //         }
+            //     }
+            // }
+
+            if (k != 0) {
+                for (T element : input) {
+                    if (k == heap.size()) {
+                        if (heap.peekMin().compareTo(element) <= 0) {
+                            heap.removeMin();
+                            heap.insert(element);
+                        }
+                    } else {
+                        heap.insert(element);
+                    }
+                }
+            } else {
+                return new DoubleLinkedList<>();
+            }
+
+            IList<T> sorted = new DoubleLinkedList<>();
+            for (int i = 0; i < k; i++) {
+                sorted.add(heap.removeMin());
+            }
+            return sorted;
+            // } else {
+            //     throw new IllegalArgumentException();
+            // }
+        }
     }
 }

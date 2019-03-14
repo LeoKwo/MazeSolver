@@ -1,6 +1,8 @@
 package datastructures.concrete;
 
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
+import datastructures.concrete.ArrayDisjointSet;
+import datastructures.interfaces.IDisjointSet;
 import datastructures.interfaces.IDictionary;
 import datastructures.interfaces.IEdge;
 import datastructures.interfaces.IList;
@@ -61,6 +63,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     private int numEdges;
     // private IDictionary<E, Double> edgeWeights;
     private IList<E> edgeWeights;
+    private ISet<V> vertSet;
     //
 
     /**
@@ -75,6 +78,10 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
         this.graph = new ChainedHashDictionary<>();
         //this.edgeWeights = new ChainedHashDictionary<>();
         edgeWeights = new DoubleLinkedList<>();
+        vertSet = new ChainedHashSet<>();
+        for (V vertex : vertices) {
+            vertSet.add(vertex);
+        }
         if (vertices != null && !vertices.contains(null) && edges != null && !edges.contains(null)) {
             for (E edge : edges) {
                 if (vertices.contains(edge.getVertex1()) && vertices.contains(edge.getVertex2())) {
@@ -159,7 +166,21 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      */
     public ISet<E> findMinimumSpanningTree() {
         // throw new NotYetImplementedException();
+        IDisjointSet<V> disjoint = new ArrayDisjointSet<>();
+        ISet<E> mst = new ChainedHashSet<>();
+        for (V vertex : vertSet) {
+            disjoint.makeSet(vertex);
+        }
         edgeWeights = Sorter.topKSort(edgeWeights.size(), edgeWeights);
+        for (E edge : edgeWeights) {
+            //if u and v are in different components
+            if (disjoint.findSet(edge.getVertex1()) != disjoint.findSet(edge.getVertex2())) {
+                mst.add(edge);
+                // update u and v to be in the same component
+                disjoint.union(edge.getVertex1(), edge.getVertex2());
+            }
+        }
+        return mst;
     }
 
     /**
