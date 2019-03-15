@@ -1,15 +1,15 @@
 package datastructures.concrete;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
-import datastructures.concrete.ArrayDisjointSet;
-import datastructures.interfaces.IDisjointSet;
-import datastructures.interfaces.IDictionary;
-import datastructures.interfaces.IEdge;
-import datastructures.interfaces.IList;
-import datastructures.interfaces.ISet;
+// import datastructures.concrete.ArrayDisjointSet;
+import datastructures.interfaces.*;
 import misc.Sorter;
 import misc.exceptions.NoPathExistsException;
 import misc.exceptions.NotYetImplementedException;
+
+import javax.xml.crypto.dom.DOMCryptoContext;
 
 /**
  * Represents an undirected, weighted graph, possibly containing self-loops, parallel edges,
@@ -58,11 +58,13 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
     // get stuck, let us know we'll try and help you get unstuck as best as we can.
 
     //
-    private IDictionary<V, ISet<V>> graph;
+    // private IDictionary<V, ISet<V>> graph;
+    private IDictionary<V, ISet<E>> graph;
     private int numVertices;
     private int numEdges;
     // private IDictionary<E, Double> edgeWeights;
     private IList<E> edgeWeights;
+    private ISet<E> edgeSet; // ???
     private ISet<V> vertSet;
     //
 
@@ -78,26 +80,31 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
         this.graph = new ChainedHashDictionary<>();
         //this.edgeWeights = new ChainedHashDictionary<>();
         edgeWeights = new DoubleLinkedList<>();
+        edgeSet = new ChainedHashSet<>();
         vertSet = new ChainedHashSet<>();
-        for (V vertex : vertices) {
-            vertSet.add(vertex);
-        }
         if (vertices != null && !vertices.contains(null) && edges != null && !edges.contains(null)) {
+            for (V vertex : vertices) {
+                vertSet.add(vertex);
+            }
             for (E edge : edges) {
                 if (vertices.contains(edge.getVertex1()) && vertices.contains(edge.getVertex2())) {
-                    ISet<V> destinations1 = graph.getOrDefault(edge.getVertex1(), null);
-                    ISet<V> destinations2 = graph.getOrDefault(edge.getVertex2(), null);
+                    // ISet<V> destinations1 = graph.getOrDefault(edge.getVertex1(), null);
+                    ISet<E> destinations1 = graph.getOrDefault(edge.getVertex1(), null);
+                    // ISet<V> destinations2 = graph.getOrDefault(edge.getVertex2(), null);
+                    ISet<E> destinations2 = graph.getOrDefault(edge.getVertex2(), null);
                     if (destinations1 == null) {
                         graph.put(edge.getVertex1(), new ChainedHashSet<>());
                     }
                     if (destinations2 == null) {
                         graph.put(edge.getVertex2(), new ChainedHashSet<>());
                     }
-                    graph.get(edge.getVertex1()).add(edge.getVertex2());
-                    graph.get(edge.getVertex2()).add(edge.getVertex1());
+                    // graph.get(edge.getVertex1()).add(edge.getVertex2());
+                    graph.get(edge.getVertex1()).add(edge);
+                    graph.get(edge.getVertex2()).add(edge);
                     if (edge.getWeight() >= 0) {
                         //edgeWeights.put(edge, edge.getWeight());
                         edgeWeights.add(edge);
+                        edgeSet.add(edge);
                     } else {
                         throw new IllegalArgumentException();
                     }
@@ -172,6 +179,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
             disjoint.makeSet(vertex);
         }
         edgeWeights = Sorter.topKSort(edgeWeights.size(), edgeWeights);
+        //edgeSet = Sorter
         for (E edge : edgeWeights) {
             //if u and v are in different components
             if (disjoint.findSet(edge.getVertex1()) != disjoint.findSet(edge.getVertex2())) {
@@ -196,7 +204,124 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
      * @throws NoPathExistsException  if there does not exist a path from the start to the end
      * @throws IllegalArgumentException if start or end is null
      */
+    // public IList<E> findShortestPathBetween(V start, V end) {
+    //     IList<E> result = new DoubleLinkedList<>();
+    //     IDictionary<V, Double> distances = new ChainedHashDictionary<>();
+    //     ISet<V> unvisited = new ChainedHashSet<>();
+    //     IPriorityQueue<Vertex> minHeap = new ArrayHeap<>();
+    //     IDictionary<V, E> predecessors = new ArrayDictionary<>();
+    //     for (V vertex : vertSet) {
+    //         if (vertex.equals(start)) {
+    //             distances.put(start, 0.0);
+    //         } else {
+    //             distances.put(vertex, Double.POSITIVE_INFINITY);
+    //         }
+    //         unvisited.add(vertex);
+    //     }
+    //     minHeap.insert(new Vertex(start, distances.get(start)));
+    //     predecessors.put(start, null);
+    //     while (!minHeap.isEmpty()) {
+    //         Vertex current = minHeap.removeMin();
+    //         if (unvisited.contains(current.getVertex())) {
+    //             V currentVertex = current.getVertex();
+    //             for (E outgoingEdge : graph.get(currentVertex)) {
+    //                 V nextVertex = outgoingEdge.getOtherVertex(currentVertex);
+    //                 double newDis = distances.get(currentVertex) + outgoingEdge.getWeight();
+    //                 if (newDis < distances.get(nextVertex)) {
+    //                     minHeap.insert(new Vertex(nextVertex, newDis));
+    //                     distances.put(nextVertex, newDis);
+    //                     predecessors.put(nextVertex, outgoingEdge);
+    //                 }
+    //             }
+    //             unvisited.remove(currentVertex);
+    //         }
+    //     }
+    //     if (!predecessors.containsKey(end)) {
+    //         throw new NoPathExistsException();
+    //     }
+    //     while (!start.equals(end)) {
+    //         E edge = predecessors.get(end);
+    //         result.insert(0, edge);
+    //         end = edge.getOtherVertex(end);
+    //     }
+    //     return result;
+    // }
+    //
+    // private class Vertex implements Comparable<Vertex> {
+    //     private V vert;
+    //     private double distance;
+    //
+    //     public Vertex(V vert, double distance) {
+    //         this.vert = vert;
+    //         this.distance = distance;
+    //     }
+    //
+    //     public V getVertex() {
+    //         return this.vert;
+    //     }
+    //
+    //     public int compareTo(Vertex other) {
+    //         return Double.compare(this.distance, other.distance);
+    //     }
+    // }
     public IList<E> findShortestPathBetween(V start, V end) {
-        throw new NotYetImplementedException();
+        IList<E> result = new DoubleLinkedList<>();
+        IDictionary<V, Double> distances = new ChainedHashDictionary<>();
+        ISet<V> unvisited = new ChainedHashSet<>();
+        IPriorityQueue<Vertex> minHeap = new ArrayHeap<>();
+        IDictionary<V, E> predecessors = new ArrayDictionary<>();
+        for (V vertex : vertSet) {
+            if (vertex.equals(start)) {
+                distances.put(start, 0.0);
+            } else {
+                distances.put(vertex, Double.POSITIVE_INFINITY);
+            }
+            unvisited.add(vertex);
+        }
+        minHeap.insert(new Vertex(start, distances.get(start)));
+        predecessors.put(start, null);
+        while (!minHeap.isEmpty()) {
+            Vertex current = minHeap.removeMin();
+            if (unvisited.contains(current.getVertex())) {
+                V currentVertex = current.getVertex();
+                for (E outgoingEdge : graph.get(currentVertex)) {
+                    V nextVertex = outgoingEdge.getOtherVertex(currentVertex);
+                    double newDis = distances.get(currentVertex) + outgoingEdge.getWeight();
+                    if (newDis < distances.get(nextVertex)) {
+                        minHeap.insert(new Vertex(nextVertex, newDis));
+                        distances.put(nextVertex, newDis);
+                        predecessors.put(nextVertex, outgoingEdge);
+                    }
+                }
+                unvisited.remove(currentVertex);
+            }
+        }
+        if (!predecessors.containsKey(end)) {
+            throw new NoPathExistsException();
+        }
+        while (!start.equals(end)) {
+            E edge = predecessors.get(end);
+            result.insert(0, edge);
+            end = edge.getOtherVertex(end);
+        }
+        return result;
+    }
+
+    private class Vertex implements Comparable<Vertex> {
+        private V vert;
+        private double distance;
+
+        public Vertex(V vert, double distance) {
+            this.vert = vert;
+            this.distance = distance;
+        }
+
+        public V getVertex() {
+            return this.vert;
+        }
+
+        public int compareTo(Vertex other) {
+            return Double.compare(this.distance, other.distance);
+        }
     }
 }
