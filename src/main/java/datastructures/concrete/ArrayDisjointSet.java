@@ -169,7 +169,6 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     //         this.size--;
     //     }
     //     //throw new NotYetImplementedException();
-    //     // TODO: tieBreaker: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
     // }
     // old
 
@@ -210,9 +209,6 @@ public class ArrayDisjointSet<T> implements IDisjointSet<T> {
     }
     // new
 
-    // private boolean tieBreaker(T item1, T item2) {
-    //     // TODO: Wo Bu Hui Xie Qiu Sun Ke Cheng Lao Da Zhi Dao...
-    // }
 
 
 

@@ -1,5 +1,6 @@
 package datastructures.concrete;
 
+import com.sun.tools.javadoc.DocImpl;
 import com.sun.xml.internal.bind.v2.model.core.ID;
 import datastructures.concrete.dictionaries.ArrayDictionary;
 import datastructures.concrete.dictionaries.ChainedHashDictionary;
@@ -270,6 +271,7 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
         ISet<V> unvisited = new ChainedHashSet<>();
         IPriorityQueue<Vertex> minHeap = new ArrayHeap<>();
         IDictionary<V, E> predecessors = new ArrayDictionary<>();
+
         for (V vertex : vertSet) {
             if (vertex.equals(start)) {
                 distances.put(start, 0.0);
@@ -294,6 +296,9 @@ public class Graph<V, E extends IEdge<V> & Comparable<E>> {
                     }
                 }
                 unvisited.remove(currentVertex);
+                if (currentVertex.equals(end)) {
+                    break;
+                }
             }
         }
         if (!predecessors.containsKey(end)) {
