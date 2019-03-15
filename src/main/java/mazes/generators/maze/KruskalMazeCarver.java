@@ -1,8 +1,8 @@
 package mazes.generators.maze;
 
 import datastructures.concrete.Graph;
-import datastructures.interfaces.IEdge;
-import datastructures.interfaces.IList;
+// import datastructures.interfaces.IEdge;
+// import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
 import mazes.entities.Maze;
 import mazes.entities.Room;
