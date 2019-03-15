@@ -1,6 +1,8 @@
 package mazes.generators.maze;
 
 import datastructures.concrete.Graph;
+import datastructures.interfaces.IEdge;
+import datastructures.interfaces.IList;
 import datastructures.interfaces.ISet;
 import mazes.entities.Maze;
 import mazes.entities.Room;
@@ -15,6 +17,7 @@ import java.util.Random;
  *
  * See the spec for more details.
  */
+@SuppressWarnings("unchecked")
 public class KruskalMazeCarver implements MazeCarver {
     @Override
     public ISet<Wall> returnWallsToRemove(Maze maze) {
@@ -32,8 +35,7 @@ public class KruskalMazeCarver implements MazeCarver {
         }
         // Graph newMaze = new Graph(rooms, walls);
         // ISet<Wall> mst = newMaze.findMinimumSpanningTree();
-        ISet<Wall> mst = new Graph(rooms, walls).findMinimumSpanningTree();
-        return mst;
+        return new Graph(rooms, walls).findMinimumSpanningTree();
 
         // Graph Graph(ISet<V> vertices, ISet<E> edges)
     }
