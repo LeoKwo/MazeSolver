@@ -1,6 +1,6 @@
 # MazeSolver
 
-This program can generate mazes and solve them!
+This program can generate mazes (using Kruskal's algorithm) and solve them (using Dijkstra's algorithm)!
 
 Here are some screenshots of the program running:
 
